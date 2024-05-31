@@ -35,6 +35,17 @@ export function initSocket(event: H3Event) {
       });
     });
 
+    // Handle Chat Message
+    socket.on("chatMessage", (payload: string) => {
+      const user = getCurrentUser(socket.id);
+      if (user) {
+        io.to(user.room).emit(
+          "message",
+          formnatMessage(user.username, payload)
+        );
+      }
+    });
+
     // Disconeect;
     socket.on("disconnect", () => {
       const user = userLeave(socket.id);

@@ -95,7 +95,7 @@
     </div>
 
     <template #footer>
-      <form>
+      <form @submit.prevent="sendMessage">
         <UInput
           v-model="message"
           placeholder="Enter your message...."
@@ -139,10 +139,12 @@ const chats = ref<Chat[]>([]);
 const users = ref<User[]>([]);
 const socket = ref<Socket>();
 const currentRoom = ref("");
+
 const sendMessage = async () => {
   socket.value?.emit("chatMessage", message.value);
   await nextTick(() => (message.value = ""));
 };
+
 onMounted(() => {
   const { username, room } = route.query as Partial<Chat>;
   if (!username || !room) {
