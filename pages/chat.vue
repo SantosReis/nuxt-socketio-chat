@@ -159,6 +159,10 @@ onMounted(() => {
   socket.value.on("message", (response: Chat) => {
     chats.value.push(response);
   });
+  socket.value.on("roomUsers", (response: { room: string; users: User[] }) => {
+    currentRoom.value = response.room;
+    users.value = response.users;
+  });
 });
 </script>
 

@@ -2,7 +2,7 @@ import { Server, type ServerOptions, type Socket } from "socket.io";
 import moment from "moment";
 import type { H3Event } from "h3";
 import type { User } from "../types";
-import { userJoin } from "./users";
+import { userJoin, getRoomUsers } from "./users";
 const options: Partial<ServerOptions> = {
   path: "/api/socket.io",
   serveClient: false,
@@ -28,6 +28,11 @@ export function initSocket(event: H3Event) {
           "message",
           formnatMessage(botName, `${user.username} has joined the chat`)
         );
+
+      io.to(user.room).emit("roomUsers", {
+        room: user.room,
+        users: getRoomUsers(user.room),
+      });
     });
   });
 }
