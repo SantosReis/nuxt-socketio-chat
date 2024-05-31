@@ -2,7 +2,7 @@ import { Server, type ServerOptions, type Socket } from "socket.io";
 import moment from "moment";
 import type { H3Event } from "h3";
 import type { User } from "../types";
-import { userJoin, getRoomUsers } from "./users";
+import { userJoin, getRoomUsers, userLeave } from "./users";
 const options: Partial<ServerOptions> = {
   path: "/api/socket.io",
   serveClient: false,
@@ -33,6 +33,22 @@ export function initSocket(event: H3Event) {
         room: user.room,
         users: getRoomUsers(user.room),
       });
+    });
+
+    // Disconeect;
+    socket.on("disconnect", () => {
+      const user = userLeave(socket.id);
+      if (user) {
+        io.to(user.room).emit(
+          "message",
+          formnatMessage(botName, `${user.username} has left the chat`)
+        );
+
+        io.to(user.room).emit("roomUsers", {
+          room: user.room,
+          users: getRoomUsers(user.room),
+        });
+      }
     });
   });
 }

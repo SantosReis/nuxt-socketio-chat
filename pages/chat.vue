@@ -164,6 +164,10 @@ onMounted(() => {
     users.value = response.users;
   });
 });
+onBeforeUnmount(() => {
+  console.log("WS Disconnect Block");
+  socket.value?.disconnect();
+});
 </script>
 
 <style scoped></style>
