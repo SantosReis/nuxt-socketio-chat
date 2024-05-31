@@ -95,7 +95,7 @@
     </div>
 
     <template #footer>
-      <form @submit.prevent="sendMessage">
+      <form>
         <UInput
           v-model="message"
           placeholder="Enter your message...."
@@ -135,56 +135,23 @@ type User = {
   room: string;
 };
 const message = ref("");
-const chats = ref<Chat[]>([
-  {
-    username: "NuxtChatapp Admin",
-    room: "room1",
-    text: "test",
-    time: "10:30 PM",
-  },
-  {
-    username: "Marcus",
-    room: "room1",
-    text: "test",
-    time: "10:30 PM",
-  },
-  {
-    username: "Reis",
-    room: "room2",
-    text: "test",
-    time: "10:30 PM",
-  },
-  {
-    username: "Marcus Reis",
-    room: "room3",
-    text: "test",
-    time: "10:30 PM",
-  },
-]);
-const users = ref<User[]>([
-  {
-    id: "1",
-    room: "marcus",
-    room: "room1",
-  },
-  {
-    id: "2",
-    room: "marcus2",
-    room: "room2",
-  },
-  {
-    id: "3",
-    room: "marcus3",
-    room: "room3",
-  },
-]);
+const chats = ref<Chat[]>([]);
+const users = ref<User[]>([]);
+const socket = ref<Socket>();
 const currentRoom = ref("");
-const sendMessage = async () => {};
 onMounted(() => {
   const { username, room } = route.query as Partial<Chat>;
   if (!username || !room) {
     navigateTo("/");
   }
+  socket.value = io({
+    path: "/api/socket.io",
+  });
+
+  console.log("WS Connected", socket.value);
+
+  //   Join ChatRoom
+  socket.value.emit("joinRom", { username, room });
 });
 </script>
 
