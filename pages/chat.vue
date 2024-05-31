@@ -139,6 +139,10 @@ const chats = ref<Chat[]>([]);
 const users = ref<User[]>([]);
 const socket = ref<Socket>();
 const currentRoom = ref("");
+const sendMessage = async () => {
+  socket.value?.emit("chatMessage", message.value);
+  await nextTick(() => (message.value = ""));
+};
 onMounted(() => {
   const { username, room } = route.query as Partial<Chat>;
   if (!username || !room) {
@@ -152,6 +156,9 @@ onMounted(() => {
 
   //   Join ChatRoom
   socket.value.emit("joinRom", { username, room });
+  socket.value.on("message", (response: Chat) => {
+    chats.value.push(response);
+  });
 });
 </script>
 
